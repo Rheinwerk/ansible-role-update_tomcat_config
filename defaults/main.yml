@@ -1,0 +1,24 @@
+_tomcat:
+  user: "tomcat"
+  group:  "tomcat"
+  additional_groups: ""
+  install_dir: "/opt/tomcat"
+  default_java_opts:
+    - "-Djava.net.preferIPv4Stack=true"
+  memory:
+    xmx: "{{ (0.65 * ansible_memtotal_mb)|int|abs }}m"
+  java_home: "/usr/lib/jvm/java-11-amazon-corretto"
+  java_opts: ""
+  ports:
+    ajp: 8009
+    shutdown: 8005
+    http: 8080
+  manager:
+    jmx:
+      user: mgr-jmx
+      password: "sorhoeodxnukxvcrjmxwegfnfrjpcjvc" #replace with your own!
+    script:
+      user: mgr-script
+      password: "zfpnvlytuqyxjlssczzeooskctuknvxl" #replace with your own!
+  tmp_dir: "/tmp/tomcat"
+  log_dir: "/var/log/tomcat"
