@@ -21,7 +21,7 @@
     # + 30s (haproxy worst case dns update delay)
     # +  2s (additional time for operations that we didn't think about)
     # -----------------------------------------------------------------
-    #   10s total wait time
+    #   42s total wait time
     - name: "Wait for consul and haproxy to propagate draining state"
       wait_for: timeout=42
 
