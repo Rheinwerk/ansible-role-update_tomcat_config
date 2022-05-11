@@ -1,6 +1,12 @@
 ---
 
-- include: "../../../includes/logrotate.yml"
+- name: Include tasks only if one of the files exist, otherwise skip the task
+  include:
+    file: "{{ item }}"
+  with_first_found:
+    files:
+     - "../../../includes/logrotate.yml"
+    skip: True
   vars:
     logrotate_config:
       name: "tomcat"
