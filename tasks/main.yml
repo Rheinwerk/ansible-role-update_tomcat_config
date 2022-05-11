@@ -1,12 +1,10 @@
 ---
 
-- name: Include logrotate setup if defined
-  include:
-    file: "{{ item }}"
+- include: "{{ item }}"
   with_first_found:
-    files:
-     - "../../../includes/logrotate.yml"
-    skip: true
+    - files:
+        - "../../../includes/logrotate.yml"
+      skip: true
   vars:
     logrotate_config:
       name: "tomcat"
