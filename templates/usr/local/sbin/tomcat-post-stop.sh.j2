@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "CATALINA_TMPDIR: ${CATALINA_TMPDIR}"
+
+{% if _tomcat.startup_script_extra is defined %}
+## --- from startup_script_extra.post_stop --->
+{{ _tomcat.startup_script_extra.post_stop | default("") }}
+## <----
+
+{% endif %}
+if [ "x${CATALINA_TMPDIR}/x" != "x/x" ]; then
+    find "${CATALINA_TMPDIR}/" -mindepth 1 -delete || echo "Could not delete everything under ${CATALINA_TMPDIR}/"
+fi

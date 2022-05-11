@@ -22,3 +22,4 @@ _tomcat:
       password: "zfpnvlytuqyxjlssczzeooskctuknvxl" #replace with your own!
   tmp_dir: "/tmp/tomcat"
   log_dir: "/var/log/tomcat"
+  draining: false

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]
+  then
+    echo "USAGE: ${0} <TOMCAT_APP_PATH>"
+    exit 255
+fi
+
+TOMCAT_APP_PATH=$1
+
+STATUS=$(systemctl show -p ActiveState --value tomcat.service)
+case $STATUS in
+  deactivating)
+    exit 1 # warn aka. draining
+    ;;
+esac
+
+curl --head --insecure --fail -o /dev/null --max-time 2 -s "https://{{ ansible_default_ipv4.address }}:8081/${TOMCAT_APP_PATH}/healthcheck" || exit 3

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+echo "CATALINA_TMPDIR: ${CATALINA_TMPDIR}"
+echo "CATALINA_HOME: ${CATALINA_HOME}"
+
+# clean up exploded wars
+if [ -d ${CATALINA_HOME}/webapps ]; then
+    for warfile in ${CATALINA_HOME}/webapps/*.war; do
+        wardir="$(basename ${warfile} .war)";
+        rm -rf "${CATALINA_HOME}/webapps/${wardir}"
+    done
+fi
+# ensure temp dir exists
+mkdir -p ${CATALINA_TMPDIR}
+chown {{ _tomcat.user }}:{{ _tomcat.group }} ${CATALINA_TMPDIR}
+# save previous garbage collection log if present
+if [ -f "{{ _tomcat.log_dir }}/gc.log" ]; then
+    mv "{{ _tomcat.log_dir }}/gc.log" "{{ _tomcat.log_dir }}/gc.$(date +%F-%T).log"
+    # Delete rotated GC logs older than 7 days
+    find "{{ _tomcat.log_dir }}" -maxdepth 1 -mtime +7 -name "gc.*.log" -delete
+fi
+
+{% if _tomcat.startup_script_extra is defined %}
+
+## --- from startup_script_extra.pre_start --->
+{{ _tomcat.startup_script_extra.pre_start | default("") }}
+## <----
+{% endif %}

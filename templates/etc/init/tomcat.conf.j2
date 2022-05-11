@@ -1,0 +1,67 @@
+description "Tomcat {{ _tomcat.role }}"
+
+# -----------------------------------------------
+# Ansible generated file! Do not modify manually!
+# -----------------------------------------------
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+respawn
+respawn limit 10 5
+
+# run as non privileged user
+setuid {{ _tomcat.user }}
+setgid {{ _tomcat.group }}
+# Set umask to disallow others to access logs, temp files etc.
+umask 027
+
+env TZ=Europe/Berlin
+
+# adapt paths:
+env JAVA_HOME="{{ _tomcat.java_home }}"
+env CATALINA_HOME="{{ _tomcat.install_dir }}"
+env CATALINA_TMPDIR="{{ _tomcat.tmp_dir }}"
+env TMPDIR="{{ _tomcat.tmp_dir }}"
+
+env JAVA_OPTS="{% for opt in _tomcat.default_java_opts %}{{ opt }} {% endfor %} {% for opt in _tomcat.java_opts %}{{ opt }} {% endfor %} -Xmx{{ _tomcat.memory.xmx }} -Xms{{ _tomcat.memory.xms|default(_tomcat.memory.xmx) }}"
+
+exec $CATALINA_HOME/bin/catalina.sh run
+
+pre-start script
+    # clean up exploded wars
+    if [ -d $CATALINA_HOME/webapps ]; then
+        for warfile in $CATALINA_HOME/webapps/*.war; do
+            wardir="$(basename ${warfile} .war)";
+            rm -rf "$CATALINA_HOME/webapps/${wardir}"
+        done
+    fi
+    # ensure temp dir exists
+    mkdir -p $CATALINA_TMPDIR
+    chown {{ _tomcat.user }}:{{ _tomcat.group }} $CATALINA_TMPDIR
+    # save previous garbage collection log if present
+    if [ -f "{{ _tomcat.log_dir }}/gc.log" ]; then
+        mv "{{ _tomcat.log_dir }}/gc.log" "{{ _tomcat.log_dir }}/gc.$(date +%F-%T).log"
+        # Delete rotated GC logs older than 7 days
+        find "{{ _tomcat.log_dir }}" -maxdepth 1 -mtime +7 -name "gc.*.log" -delete
+    fi
+
+{% if _tomcat.startup_script_extra is defined %}
+
+## --- from startup_script_extra.pre_start --->
+{{ _tomcat.startup_script_extra.pre_start | default("") }}
+## <----
+{% endif %}
+end script
+
+# cleanup catalina temp directory after stop
+post-stop script
+{% if _tomcat.startup_script_extra is defined %}
+## --- from startup_script_extra.post_stop --->
+{{ _tomcat.startup_script_extra.post_stop | default("") }}
+## <----
+
+{% endif %}
+    if [ "x${CATALINA_TMPDIR}/x" != "x/x" ]; then
+        find "${CATALINA_TMPDIR}/" -mindepth 1 -delete || echo "Could not delete everything under ${CATALINA_TMPDIR}/"
+    fi
+end script
