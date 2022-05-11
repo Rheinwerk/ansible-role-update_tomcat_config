@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<tomcat-users>
+	<role rolename="manager-jmx"/>
+	<role rolename="manager-script"/>
+	<user username="{{ _tomcat.manager.jmx.user }}"  password="{{ _tomcat.manager.jmx.password  }}" roles="manager-jmx"/>
+	<user username="{{ _tomcat.manager.script.user }}"  password="{{ _tomcat.manager.script.password }}" roles="manager-script"/>
+</tomcat-users>
+

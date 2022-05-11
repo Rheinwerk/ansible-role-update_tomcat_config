@@ -1,0 +1,12 @@
+[Unit]
+Wants={{ required_services | join(" ") }}
+After={{ required_services | join(" ") }}
+
+[Service]
+ExecStop=
+# Requests and waits for draining
+ExecStop=/usr/local/sbin/tomcat-drain.sh
+ExecStop={{ _tomcat.install_dir }}/bin/catalina.sh stop 60
+
+# Allow drain-server playbook to try and gracefully drain the server (playbook=232s + room_to_breathe=2s)
+TimeoutStopSec=234s

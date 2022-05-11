@@ -51,7 +51,9 @@ jobs:
       - name: Run Checks
         run: |
           find . -name '*.yml' -print0 | xargs -0 yamllint -c galaxy-yamllint.yaml
-          cd tests; ansible-playbook test.yml -i inventory --syntax-check
+          cd tests;
+          ansible-galaxy install -r requirements.yml
+          ansible-playbook test.yml -i inventory --syntax-check
           ./run_tests.sh
         env:
           ANSIBLE_FORCE_COLOR: '1'

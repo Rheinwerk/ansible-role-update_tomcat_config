@@ -1,0 +1,36 @@
+---
+
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: "Start draining of server"
+      uri:
+        url: "http://localhost:{{ _tomcat.ports.http }}/api/control/drain"
+        method: POST
+      register: drain_response
+      until: drain_response.status == 200
+      retries: 10
+      delay: 1
+
+    # We wait to avoid a situation where the server is already drained but consul never had time to
+    #  detect and propagate this information. This prevents shutting down an already drained server
+    #  at the same time as haproxy still allows new connections leading to errors.
+    #
+    # Wait time calculation
+    #   10s (consul health probe interval)
+    # + 30s (haproxy worst case dns update delay)
+    # +  2s (additional time for operations that we didn't think about)
+    # -----------------------------------------------------------------
+    #   42s total wait time
+    - name: "Wait for consul and haproxy to propagate draining state"
+      wait_for: timeout=42
+
+    - name: "Wait until server has been drained"
+      uri:
+        url: "http://localhost:{{ _tomcat.ports.http }}/api/metrics"
+        method: GET
+        status_code: 200
+      register: metrics_response
+      until: metrics_response.json.metrics.drained == true
+      retries: 90
+      delay: 2
