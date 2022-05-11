@@ -13,4 +13,5 @@ galaxy_info:
         - focal
   galaxy_tags:
     - tomcat
-dependencies: []
+dependencies:
+  - rheinwerk.tomcat_server
