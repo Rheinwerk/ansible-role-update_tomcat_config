@@ -5,4 +5,5 @@
   become_user: root
 
   roles:
+    - rheinwerk.tomcat_server # installs tomcat
     - ansible-role-update_tomcat_config
