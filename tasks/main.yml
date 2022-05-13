@@ -44,6 +44,11 @@
     - usr/local/sbin/tomcat-pre-start.sh
     - usr/local/sbin/tomcat-post-stop.sh
 
+- name: Create tomcat healthcheck consul helper script
+  template: src="{{ item }}.j2" dest=/{{ item }} mode=0755 owner=root group=root
+  with_items:
+    - "usr/local/bin/tomcat-healthcheck.sh"
+
 - block:
     - name: Create tomcat systemd drop-in graceful shutdown
       vars:
@@ -68,11 +73,6 @@
       template: src="{{ item }}.j2" dest=/{{ item }} mode=0750 owner=root group="{{ _tomcat.group }}"
       with_items:
         - "usr/local/sbin/tomcat-drain.sh"
-
-    - name: Create tomcat healthcheck consul helper script
-      template: src="{{ item }}.j2" dest=/{{ item }} mode=0755 owner=root group=root
-      with_items:
-        - "usr/local/bin/tomcat-healthcheck.sh"
   when: _tomcat.draining | default(false)
 
 - name: Setup tomcat service
