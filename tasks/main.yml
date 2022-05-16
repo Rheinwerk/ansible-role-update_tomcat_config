@@ -55,11 +55,11 @@
         required_services:
           - haproxy.service
           - mongos.service
-            - docker.service
-            - consul-client.service
-            - dnsmasq.service
-            - systemd-resolved.service
-            - dbus.service # consul health checks use `systemctl` which requires `dbus` to be running
+          - docker.service
+          - consul-client.service
+          - dnsmasq.service
+          - systemd-resolved.service
+          - dbus.service # consul health checks use `systemctl` which requires `dbus` to be running
       template: src="{{ item }}.j2" dest="/{{ item }}" mode=0644 owner=root group=root
       with_items:
         - "etc/systemd/system/tomcat.service.d/20-infrastructure-draining.conf"
