@@ -43,53 +43,36 @@
   with_items:
     - usr/local/sbin/tomcat-pre-start.sh
     - usr/local/sbin/tomcat-post-stop.sh
+    - usr/local/sbin/tomcat-drain.sh
 
 - name: Create tomcat healthcheck consul helper script
   template: src="{{ item }}.j2" dest=/{{ item }} mode=0755 owner=root group=root
   with_items:
     - "usr/local/bin/tomcat-healthcheck.sh"
 
-- block:
-    - name: Create tomcat systemd drop-in graceful infrastructure shutdown
-      vars:
-        required_services:
-          - haproxy.service
-          - mongos.service
-          - docker.service
-          - consul-client.service
-          - dnsmasq.service
-          - systemd-resolved.service
-          - dbus.service # consul health checks use `systemctl` which requires `dbus` to be running
-      template: src="{{ item }}.j2" dest="/{{ item }}" mode=0644 owner=root group=root
-      with_items:
-        - "etc/systemd/system/tomcat.service.d/20-infrastructure-draining.conf"
-  when: _tomcat.draining is match("infrastructure")
+- name: Create tomcat systemd drain drop-in
+  vars:
+    required_services:
+      - haproxy.service
+      - mongos.service
+      - docker.service
+      - consul-client.service
+      - dnsmasq.service
+      - systemd-resolved.service
+      - dbus.service # consul health checks use `systemctl` which requires `dbus` to be running
+  template: src="{{ item }}.j2" dest="/{{ item }}" mode=0644 owner=root group=root
+  with_items:
+    - "etc/systemd/system/tomcat.service.d/20-tomcat-drain.conf"
 
-- block:
-    - name: Create tomcat systemd drop-in graceful application shutdown
-      vars:
-        required_services:
-          - haproxy.service
-          - mongos.service
-          - docker.service
-          - consul-client.service
-          - dnsmasq.service
-          - systemd-resolved.service
-          - dbus.service # consul health checks use `systemctl` which requires `dbus` to be running
-      template: src="{{ item }}.j2" dest="/{{ item }}" mode=0644 owner=root group=root
-      with_items:
-        - "etc/systemd/system/tomcat.service.d/20-application-draining.conf"
+- name: Create directories
+  file: name="{{ item.name }}" owner="{{ item.owner }}" group="{{ item.group }}" mode="{{ item.mode }}" state=directory
+  with_items:
+    - { name: "/etc/ansible/playbooks",  owner: "root", group: "root", mode: "0755" }
 
-    - name: Install draining playbook
-      template: src="{{ item }}.j2" dest="/{{ item }}" owner=root group=root mode=0644
-      with_items:
-        - "etc/ansible/playbooks/tomcat-drain.yml"
-
-    - name: Create tomcat systemd helper script for draining
-      template: src="{{ item }}.j2" dest=/{{ item }} mode=0750 owner=root group="{{ _tomcat.group }}"
-      with_items:
-        - "usr/local/sbin/tomcat-drain.sh"
-  when: _tomcat.draining is match("application")
+- name: Install draining playbook
+  template: src="{{ item }}.j2" dest="/{{ item }}" owner=root group=root mode=0644
+  with_items:
+    - "etc/ansible/playbooks/tomcat-drain.yml"
 
 - name: Setup tomcat service
   systemd:
