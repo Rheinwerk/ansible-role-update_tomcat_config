@@ -11,6 +11,7 @@
       until: drain_response.status == 200
       retries: 10
       delay: 1
+      when: _tomcat.application_draining|default(false)
 
     # We wait to avoid a situation where the server is already drained but consul never had time to
     #  detect and propagate this information. This prevents shutting down an already drained server
@@ -34,3 +35,4 @@
       until: metrics_response.json.metrics.drained == true
       retries: 90
       delay: 2
+      when: _tomcat.application_draining|default(false)
