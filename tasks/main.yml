@@ -64,6 +64,11 @@
   with_items:
     - "etc/systemd/system/tomcat.service.d/20-tomcat-drain.conf"
 
+- name: Create directories
+  file: name="{{ item.name }}" owner="{{ item.owner }}" group="{{ item.group }}" mode="{{ item.mode }}" state=directory
+  with_items:
+    - { name: "/etc/ansible/playbooks",  owner: "root", group: "root", mode: "0755" }
+
 - name: Install draining playbook
   template: src="{{ item }}.j2" dest="/{{ item }}" owner=root group=root mode=0644
   with_items:
