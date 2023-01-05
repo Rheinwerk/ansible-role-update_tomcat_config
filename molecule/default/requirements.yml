@@ -1,0 +1,3 @@
+- src: https://github.com/Rheinwerk/ansible-role-tomcat_server.git
+  name: tomcat_server
+  scm: git
