@@ -1,6 +1,7 @@
 ---
 
-- include: "{{ item }}"
+- name: Include logrotate if exists
+  include_tasks: "{{ item }}"
   with_first_found:
     - files:
         - "../../../includes/logrotate.yml"
@@ -13,40 +14,90 @@
         - { dir_pattern: "{{ _tomcat.log_dir }}", file_pattern: "*.log" }
 
 - name: Create webapps dir
-  file: path="{{ _tomcat.install_dir }}/webapps" state=directory owner={{ _tomcat.user }} group={{ _tomcat.group }} mode=0755
+  file:
+    path: "{{ _tomcat.install_dir }}/webapps"
+    state: directory
+    owner: "{{ _tomcat.user }}"
+    group: "{{ _tomcat.group }}"
+    mode: 0755
 
 - name: Create temp dir
-  file: path={{ _tomcat.tmp_dir }} state=directory owner={{ _tomcat.user }} group={{ _tomcat.group }} mode=0750
+  file:
+    path: "{{ _tomcat.tmp_dir }}"
+    state: directory
+    owner: "{{ _tomcat.user }}"
+    group: "{{ _tomcat.group }}"
+    mode: 0750
 
 - name: Create log dir
-  file: path="{{ _tomcat.log_dir }}" state=directory owner="{{ _tomcat.user }}" group="{{ _tomcat.group }}" mode=0750
+  file:
+    path: "{{ _tomcat.log_dir }}"
+    state: directory
+    owner: "{{ _tomcat.user }}"
+    group: "{{ _tomcat.group }}"
+    mode: 0750
 
 - name: Create server.xml
-  template: src="tomcat/conf/server.xml.j2" dest="{{ _tomcat.install_dir }}/conf/server.xml" owner=root group="{{ _tomcat.group }}" mode=0640
+  template:
+    src: "tomcat/conf/server.xml.j2"
+    dest: "{{ _tomcat.install_dir }}/conf/server.xml"
+    owner: root
+    group: "{{ _tomcat.group }}"
+    mode: 0640
 
 - name: Create logging.properties
-  template: src="tomcat/conf/logging.properties.j2"  dest="{{ _tomcat.install_dir }}/conf/logging.properties" owner=root group="{{ _tomcat.group }}" mode=0640
+  template:
+    src: "tomcat/conf/logging.properties.j2"
+    dest: "{{ _tomcat.install_dir }}/conf/logging.properties"
+    owner: root
+    group: "{{ _tomcat.group }}"
+    mode: 0640
 
 - name: Create tomcat-users.xml
-  template: src="tomcat/conf/tomcat-users.xml.j2" dest="{{ _tomcat.install_dir }}/conf/tomcat-users.xml" owner=root group="{{ _tomcat.group }}" mode=0640
+  template:
+    src: "tomcat/conf/tomcat-users.xml.j2"
+    dest: "{{ _tomcat.install_dir }}/conf/tomcat-users.xml"
+    owner: root
+    group: "{{ _tomcat.group }}"
+    mode: 0640
 
 - name: Create tomcat systemd dir
-  file: path="/etc/systemd/system/tomcat.service.d" state=directory owner=root group="{{ _tomcat.group }}" mode=0640
+  file:
+    path: "/etc/systemd/system/tomcat.service.d"
+    state: directory
+    owner: root
+    group: "{{ _tomcat.group }}"
+    mode: 0640
 
 - name: Create tomcat systemd environment files
-  template: src="{{ item }}.j2" dest="/{{ item }}" mode=0640 owner=root group="{{ _tomcat.group }}"
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    mode: 0640
+    owner: root
+    group: "{{ _tomcat.group }}"
   with_items:
     - "etc/systemd/system/tomcat.service.d/10-environment.conf"
 
 - name: Create tomcat systemd helper script
-  template: src="{{ item }}.j2" dest=/{{ item }} mode=0750 owner=root group="{{ _tomcat.group }}"
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    mode: 0750
+    owner: root
+    group: "{{ _tomcat.group }}"
   with_items:
     - usr/local/sbin/tomcat-pre-start.sh
     - usr/local/sbin/tomcat-post-stop.sh
     - usr/local/sbin/tomcat-drain.sh
 
 - name: Create tomcat healthcheck consul helper script
-  template: src="{{ item }}.j2" dest=/{{ item }} mode=0755 owner=root group=root
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    mode: 0755
+    owner: root
+    group: root
   with_items:
     - "usr/local/bin/tomcat-healthcheck.sh"
 
@@ -60,17 +111,32 @@
       - dnsmasq.service
       - systemd-resolved.service
       - dbus.service # consul health checks use `systemctl` which requires `dbus` to be running
-  template: src="{{ item }}.j2" dest="/{{ item }}" mode=0644 owner=root group=root
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    mode: 0644
+    owner: root
+    group: root
   with_items:
     - "etc/systemd/system/tomcat.service.d/20-tomcat-drain.conf"
 
 - name: Create directories
-  file: name="{{ item.name }}" owner="{{ item.owner }}" group="{{ item.group }}" mode="{{ item.mode }}" state=directory
+  file:
+    name: "{{ item.name }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
   with_items:
     - { name: "/etc/ansible/playbooks",  owner: "root", group: "root", mode: "0755" }
 
 - name: Install draining playbook
-  template: src="{{ item }}.j2" dest="/{{ item }}" owner=root group=root mode=0644
+  template:
+    src: "{{ item }}.j2"
+    dest: "/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
   with_items:
     - "etc/ansible/playbooks/tomcat-drain.yml"
 
@@ -82,4 +148,9 @@
     - "tomcat.service"
 
 - name: Create curl credentials file for jmx monitoring
-  template: src=tomcat/curl-jmx-creds.j2 dest="{{ _tomcat.install_dir }}/curl-jmx-creds" mode=0600 owner=root group=root
+  template:
+    src: tomcat/curl-jmx-creds.j2
+    dest: "{{ _tomcat.install_dir }}/curl-jmx-creds"
+    mode: 0600
+    owner: root
+    group: root

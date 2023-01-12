@@ -7,7 +7,7 @@ _tomcat:
   default_java_opts:
     - "-Djava.net.preferIPv4Stack=true"
   memory:
-    xmx: "{{ (0.65 * ansible_memtotal_mb)|int|abs }}m"
+    xmx: "{{ (0.65 * ansible_memtotal_mb) | int | abs }}m"
   java_home: "/usr/lib/jvm/java-11-amazon-corretto"
   java_opts: ""
   ports:
