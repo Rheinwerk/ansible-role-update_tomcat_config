@@ -1,7 +1,7 @@
 ---
 
 - name: Include logrotate if exists
-  include_tasks: "{{ item }}"
+  ansible.builtin.include_tasks: "{{ item }}"
   with_first_found:
     - files:
         - "../../../includes/logrotate.yml"
@@ -14,7 +14,7 @@
         - { dir_pattern: "{{ _tomcat.log_dir }}", file_pattern: "*.log" }
 
 - name: Create webapps dir
-  file:
+  ansible.builtin.file:
     path: "{{ _tomcat.install_dir }}/webapps"
     state: directory
     owner: "{{ _tomcat.user }}"
@@ -22,7 +22,7 @@
     mode: 0755
 
 - name: Create temp dir
-  file:
+  ansible.builtin.file:
     path: "{{ _tomcat.tmp_dir }}"
     state: directory
     owner: "{{ _tomcat.user }}"
@@ -30,7 +30,7 @@
     mode: 0750
 
 - name: Create log dir
-  file:
+  ansible.builtin.file:
     path: "{{ _tomcat.log_dir }}"
     state: directory
     owner: "{{ _tomcat.user }}"
@@ -38,7 +38,7 @@
     mode: 0750
 
 - name: Create server.xml
-  template:
+  ansible.builtin.template:
     src: "tomcat/conf/server.xml.j2"
     dest: "{{ _tomcat.install_dir }}/conf/server.xml"
     owner: root
@@ -46,7 +46,7 @@
     mode: 0640
 
 - name: Create logging.properties
-  template:
+  ansible.builtin.template:
     src: "tomcat/conf/logging.properties.j2"
     dest: "{{ _tomcat.install_dir }}/conf/logging.properties"
     owner: root
@@ -54,7 +54,7 @@
     mode: 0640
 
 - name: Create tomcat-users.xml
-  template:
+  ansible.builtin.template:
     src: "tomcat/conf/tomcat-users.xml.j2"
     dest: "{{ _tomcat.install_dir }}/conf/tomcat-users.xml"
     owner: root
@@ -62,7 +62,7 @@
     mode: 0640
 
 - name: Create tomcat systemd dir
-  file:
+  ansible.builtin.file:
     path: "/etc/systemd/system/tomcat.service.d"
     state: directory
     owner: root
@@ -70,7 +70,7 @@
     mode: 0640
 
 - name: Create tomcat systemd environment files
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/{{ item }}"
     mode: 0640
@@ -80,7 +80,7 @@
     - "etc/systemd/system/tomcat.service.d/10-environment.conf"
 
 - name: Create tomcat systemd helper script
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/{{ item }}"
     mode: 0750
@@ -92,7 +92,7 @@
     - usr/local/sbin/tomcat-drain.sh
 
 - name: Create tomcat healthcheck consul helper script
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/{{ item }}"
     mode: 0755
@@ -111,7 +111,7 @@
       - dnsmasq.service
       - systemd-resolved.service
       - dbus.service # consul health checks use `systemctl` which requires `dbus` to be running
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/{{ item }}"
     mode: 0644
@@ -121,7 +121,7 @@
     - "etc/systemd/system/tomcat.service.d/20-tomcat-drain.conf"
 
 - name: Create directories
-  file:
+  ansible.builtin.file:
     name: "{{ item.name }}"
     owner: "{{ item.owner }}"
     group: "{{ item.group }}"
@@ -131,7 +131,7 @@
     - { name: "/etc/ansible/playbooks",  owner: "root", group: "root", mode: "0755" }
 
 - name: Install draining playbook
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/{{ item }}"
     owner: root
@@ -141,14 +141,14 @@
     - "etc/ansible/playbooks/tomcat-drain.yml"
 
 - name: Setup tomcat service
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ item }}"
     enabled: yes
   with_items:
     - "tomcat.service"
 
 - name: Create curl credentials file for jmx monitoring
-  template:
+  ansible.builtin.template:
     src: tomcat/curl-jmx-creds.j2
     dest: "{{ _tomcat.install_dir }}/curl-jmx-creds"
     mode: 0600

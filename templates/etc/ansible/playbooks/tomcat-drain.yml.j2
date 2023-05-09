@@ -4,7 +4,7 @@
   connection: local
   tasks:
     - name: "Start draining of server"
-      uri:
+      ansible.builtin.uri:
         url: "http://localhost:{{ _tomcat.ports.http }}/api/control/drain"
         method: POST
       register: drain_response
@@ -27,7 +27,7 @@
       wait_for: timeout=42
 
     - name: "Wait until server has been drained"
-      uri:
+      ansible.builtin.uri:
         url: "http://localhost:{{ _tomcat.ports.http }}/api/metrics"
         method: GET
         status_code: 200
