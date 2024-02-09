@@ -20,7 +20,13 @@
     <Connector address="127.0.0.1" port="{{ _tomcat.ports.http }}"
                URIEncoding="UTF-8" connectionTimeout="200000"
                protocol="HTTP/1.1" maxKeepAliveRequests="-1"
-               maxHttpHeaderSize="65536" />
+               maxHttpHeaderSize="65536"
+{% if _tomcat.compression.global | default(false) %}
+               compression="on"
+               compressionMinSize="{{ _tomcat.compression.min_size }}"
+               compressibleMimeType="{{ _tomcat.compression.mime_type }}"
+{% endif %}
+    />
 
     <!-- Define an AJP 1.3 Connector on port {{ _tomcat.ports.ajp }} -->
     <Connector address="127.0.0.1" port="{{ _tomcat.ports.ajp }}"

@@ -24,3 +24,8 @@ _tomcat:
   tmp_dir: "/tmp/tomcat"
   log_dir: "/var/log/tomcat"
   application_draining: false
+  compression:
+    #https://tomcat.apache.org/tomcat-8.5-doc/config/http.html
+    global: false #compression
+    min_size: 2048 #compressionMinSize
+    mime_type: "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript" #compressibleMimeType
