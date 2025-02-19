@@ -1,0 +1,6 @@
+---
+# skip idempotence tests
+- name: Include Tomcat Server install role
+  ansible.builtin.include_role:
+    name: tomcat_server
+  when: "'molecule-idempotence-notest' not in ansible_skip_tags"
