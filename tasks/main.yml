@@ -12,6 +12,7 @@
       entries:
         - { dir_pattern: "{{ _tomcat.log_dir }}", file_pattern: "catalina.out" }
         - { dir_pattern: "{{ _tomcat.log_dir }}", file_pattern: "*.log" }
+        - { dir_pattern: "{{ _tomcat.log_dir }}", file_pattern: "*.jsonl" }
 
 - name: Create webapps dir
   ansible.builtin.file:

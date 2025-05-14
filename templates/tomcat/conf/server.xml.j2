@@ -47,10 +47,10 @@
         <Valve className="org.apache.catalina.valves.RemoteIpValve"
                protocolHeader="x-forwarded-proto" />
 
-        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="{{ _tomcat.log_dir }}"
+        <Valve className="org.apache.catalina.valves.JsonAccessLogValve" directory="{{ _tomcat.log_dir }}"
                requestAttributesEnabled="true"
-               prefix="access" suffix=".log" rotatable="false"
-               pattern="%h %l %u %t &quot;%r&quot; %s %b XXXX %{X-Req-ID}i %{User-Agent}i" />
+               prefix="access" suffix=".jsonl" rotatable="false"
+               pattern="%r %h %s %b %t %{X-Req-Id}i %{User-Agent}i %{distributor}r %{tenant}r %{user}r %{client}r %{distributor_admin_id}r" />
       </Host>
     </Engine>
   </Service>
