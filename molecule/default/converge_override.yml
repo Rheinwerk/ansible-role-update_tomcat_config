@@ -5,6 +5,11 @@
     name: tomcat_server
   when: "'molecule-idempotence-notest' not in ansible_skip_tags"
 
+- name: Include AWS JDK role
+  ansible.builtin.include_role:
+    name: aws_jdk
+  when: "'molecule-idempotence-notest' not in ansible_skip_tags"
+
 - name: Find Corretto Java SDK directory
   ansible.builtin.find:
     paths: /usr/lib/jvm
@@ -14,7 +19,7 @@
     depth: 1
   register: corretto_dirs
 
-- name: Set JAVA_HOME to Corretto directory
+- name: Set DEFAULT_JAVA_HOME to Corretto directory
   ansible.builtin.set_fact:
     DEFAULT_JAVA_HOME: "{{ corretto_dirs.files[0].path }}"
   when: corretto_dirs.matched > 0

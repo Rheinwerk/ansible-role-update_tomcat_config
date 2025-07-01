@@ -1,3 +1,7 @@
 - src: https://github.com/Rheinwerk/ansible-role-tomcat_server.git
   name: tomcat_server
   scm: git
+
+- src: https://github.com/Rheinwerk/ansible-role-aws_jdk.git
+  name: aws_jdk
+  scm: git
