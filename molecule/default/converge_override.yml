@@ -23,3 +23,4 @@
   ansible.builtin.set_fact:
     DEFAULT_JAVA_HOME: "{{ corretto_dirs.files[0].path }}"
   when: corretto_dirs.matched > 0
+  failed_when: corretto_dirs.matched == 0
