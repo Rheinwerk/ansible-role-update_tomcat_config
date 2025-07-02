@@ -3,7 +3,7 @@ Environment='TZ=Europe/Berlin'
 
 Environment='TMPDIR={{ _tomcat.tmp_dir }}'
 
-Environment='JAVA_HOME={{ _tomcat.java_home }}'
+Environment='JAVA_HOME={{ DEFAULT_JAVA_HOME }}'
 Environment='JAVA_OPTS={% for opt in _tomcat.default_java_opts %}{{ opt }} {% endfor %} {% for opt in _tomcat.java_opts %}{{ opt }} {% endfor %} -Xmx{{ _tomcat.memory.xmx }} -Xms{{ _tomcat.memory.xms|default(_tomcat.memory.xmx) }}'
 
 Environment='CATALINA_HOME={{ _tomcat.install_dir }}'
