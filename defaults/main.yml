@@ -8,6 +8,7 @@ _tomcat:
     - "-Djava.net.preferIPv4Stack=true"
   memory:
     xmx: "{{ (0.65 * ansible_memtotal_mb) | int | abs }}m"
+  java_home: "{{ DEFAULT_JAVA_HOME }}"
   java_opts: ""
   ports:
     ajp: 8009
