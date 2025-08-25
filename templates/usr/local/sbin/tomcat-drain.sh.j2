@@ -1,4 +1,4 @@
 #!/bin/bash -x
 
-OUTPUT=$(/usr/local/bin/ansible-playbook /etc/ansible/playbooks/tomcat-drain.yml)
+ansible-playbook /etc/ansible/playbooks/tomcat-drain.yml >/dev/null
 /usr/bin/emit_bosun --metric "cd.app.control.shutdown.drain.exit_status" --value $? --tags "component={{ _tomcat.role }}" --rate gauge --unit exit_code --description "0 = Draining of component succeeded. 0 != Draining of component failed."
