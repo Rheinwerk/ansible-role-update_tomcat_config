@@ -17,15 +17,15 @@ _tomcat:
   manager:
     jmx:
       user: mgr-jmx
-      password: "sorhoeodxnukxvcrjmxwegfnfrjpcjvc" #replace with your own!
+      password: "sorhoeodxnukxvcrjmxwegfnfrjpcjvc" # replace with your own!
     script:
       user: mgr-script
-      password: "zfpnvlytuqyxjlssczzeooskctuknvxl" #replace with your own!
+      password: "zfpnvlytuqyxjlssczzeooskctuknvxl" # replace with your own!
   tmp_dir: "/tmp/tomcat"
   log_dir: "/var/log/tomcat"
   application_draining: false
   compression:
-    #https://tomcat.apache.org/tomcat-8.5-doc/config/http.html
-    global: false #compression
-    min_size: 2048 #compressionMinSize
+    # https://tomcat.apache.org/tomcat-8.5-doc/config/http.html
+    global: false # compression
+    min_size: 2048 # compressionMinSize
     mime_type: "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript" #compressibleMimeType
