@@ -1,4 +1,6 @@
 #!/bin/bash -x
 
 ansible-playbook /etc/ansible/playbooks/tomcat-drain.yml >/dev/null
-/usr/bin/emit_bosun --metric "cd.app.control.shutdown.drain.exit_status" --value $? --tags "component={{ _tomcat.role }}" --rate gauge --unit exit_code --description "0 = Draining of component succeeded. 0 != Draining of component failed."
+_exit_code=$?
+/usr/bin/emit_bosun --metric "cd.app.control.shutdown.drain.exit_status" --value $_exit_code --tags "component={{ _tomcat.role }}" --rate gauge --unit exit_code --description "0 = Draining of component succeeded. 0 != Draining of component failed."
+/usr/local/bin/emit_vm --metric "cd.app.control.shutdown.drain.exit_status" --value $_exit_code --tags "component={{ _tomcat.role }}" || echo "failed to emit metric to vm"
