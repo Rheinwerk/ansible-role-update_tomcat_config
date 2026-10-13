@@ -16,4 +16,4 @@ case $STATUS in
     ;;
 esac
 
-curl --head --insecure --fail -o /dev/null --max-time 2 -s "https://{{ ansible_default_ipv4.address }}:${TOMCAT_APP_PORT}/${TOMCAT_APP_PATH}/healthcheck" || exit 3
+curl --head --insecure --fail -o /dev/null --max-time 2 -s "https://{{ ansible_facts['default_ipv4'].address }}:${TOMCAT_APP_PORT}/${TOMCAT_APP_PATH}/healthcheck" || exit 3
