@@ -11,7 +11,6 @@ _tomcat:
   java_home: "{{ DEFAULT_JAVA_HOME }}"
   java_opts: ""
   ports:
-    ajp: 8009
     shutdown: 8005
     http: 8080
   manager:

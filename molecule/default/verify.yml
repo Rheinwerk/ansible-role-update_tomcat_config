@@ -1,0 +1,16 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Read server.xml
+      ansible.builtin.slurp:
+        src: /opt/tomcat/conf/server.xml
+      register: verify_server_xml
+
+    - name: Check the connectors in server.xml
+      ansible.builtin.assert:
+        that:
+          - "'protocol=\"HTTP/1.1\"' in verify_server_xml.content | b64decode"
+          - "'AJP/1.3' not in verify_server_xml.content | b64decode"
+        fail_msg: server.xml must define the HTTP connector and no AJP connector
